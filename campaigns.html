@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Campaigns — Glow Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+</head><body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="page">
+      <div class="page-header">
+        <div class="title-block"><div class="crumbs">Marketing · Campaigns</div><h1>Campaigns</h1><p>Email, SMS, and automation flows.</p></div>
+        <div class="page-actions"><button class="btn btn-secondary">Templates</button><button class="btn btn-accent" id="newBtn"></button></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head" style="padding:14px 20px"><div class="tabs"><button class="active">All</button><button>Email</button><button>SMS</button><button>Automations</button></div></div>
+        <table>
+          <thead><tr><th>Campaign</th><th>Channel</th><th>Recipients</th><th>Open rate</th><th>Click rate</th><th>Status</th><th>Date</th><th style="width:80px"></th></tr></thead>
+          <tbody id="body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/icons.js"></script><script src="../js/data.js"></script><script src="../js/layout.js"></script>
+<script>
+window.PAGE_DEPTH=1;renderLayout("campaigns");
+document.getElementById("newBtn").innerHTML=icon("plus",14)+" New campaign";
+const stmap={sent:"active",active:"scheduled",draft:"draft",scheduled:"low"};
+document.getElementById("body").innerHTML=MOCK.campaigns.map(c=>`
+  <tr>
+    <td><div class="product-cell"><div class="thumb" style="background:var(--grad-1)">${icon("mail",16)}</div><div><b>${c.name}</b></div></div></td>
+    <td>${c.channel}</td>
+    <td>${c.recipients.toLocaleString()}</td>
+    <td>${c.opens}</td>
+    <td>${c.clicks}</td>
+    <td><span class="status ${stmap[c.status]}">${c.status}</span></td>
+    <td><span class="sub">${c.date}</span></td>
+    <td><button class="btn btn-secondary btn-sm">${icon("eye",13)} View</button></td>
+  </tr>`).join("");
+</script></body></html>

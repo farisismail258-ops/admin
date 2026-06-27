@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Orders — Glow Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+</head><body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="page">
+      <div class="page-header">
+        <div class="title-block">
+          <div class="crumbs">Sales · Orders</div>
+          <h1>Orders</h1>
+          <p>Track, fulfill, and refund every order across channels.</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-secondary" id="exportBtn"></button>
+          <button class="btn btn-secondary">Print labels</button>
+          <button class="btn btn-accent" id="newBtn"></button>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">Today</span><div class="kpi-icon violet" id="i1"></div></div><div class="kpi-value">48</div><div class="kpi-meta"><span class="delta up">+12%</span><span class="sub">orders</span></div></div>
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">Pending</span><div class="kpi-icon amber" id="i2"></div></div><div class="kpi-value">12</div><div class="kpi-meta"><span class="sub">awaiting fulfillment</span></div></div>
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">Shipped</span><div class="kpi-icon blue" id="i3"></div></div><div class="kpi-value">186</div><div class="kpi-meta"><span class="sub">in transit</span></div></div>
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">Avg order value</span><div class="kpi-icon green" id="i4"></div></div><div class="kpi-value">$118.40</div><div class="kpi-meta"><span class="delta up">+4.1%</span></div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head" style="padding:14px 20px">
+          <div class="tabs" id="statusTabs">
+            <button class="active" data-f="all">All · 1,842</button>
+            <button data-f="paid">Paid · 1,212</button>
+            <button data-f="processing">Processing · 84</button>
+            <button data-f="pending">Pending · 12</button>
+            <button data-f="shipped">Shipped · 186</button>
+            <button data-f="delivered">Delivered · 312</button>
+            <button data-f="refunded">Refunded · 24</button>
+            <button data-f="cancelled">Cancelled · 12</button>
+          </div>
+        </div>
+        <div class="table-toolbar">
+          <div class="toolbar-search"><input id="search" placeholder="Search by order #, customer, email..."/></div>
+          <button class="chip">Date <span id="c1"></span></button>
+          <button class="chip">Channel <span id="c2"></span></button>
+          <button class="chip">Country <span id="c3"></span></button>
+          <div style="margin-left:auto;display:flex;gap:8px" id="bulkBar"></div>
+        </div>
+        <table>
+          <thead><tr>
+            <th style="width:38px"><input type="checkbox" class="cb" id="selectAll"/></th>
+            <th>Order</th><th>Date</th><th>Customer</th><th>Channel</th><th>Payment</th><th>Status</th><th style="text-align:right">Total</th><th style="width:48px"></th>
+          </tr></thead>
+          <tbody id="body"></tbody>
+        </table>
+        <div class="pagination">
+          <div>Showing <b id="shown">10</b> of <b>1,842</b> orders</div>
+          <div class="pager"><button>‹</button><button class="active">1</button><button>2</button><button>3</button>…<button>185</button><button>›</button></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="drawer-backdrop" id="db"></div>
+<aside class="drawer" id="dr">
+  <div class="drawer-head">
+    <div><h2 id="drTitle">Order #1284</h2><p style="margin:2px 0 0;font-size:12.5px;color:var(--text-3)" id="drSub"></p></div>
+    <button class="icon-btn" id="closeDr"></button>
+  </div>
+  <div class="drawer-body" id="drBody"></div>
+  <div class="drawer-foot">
+    <button class="btn btn-secondary">Print invoice</button>
+    <button class="btn btn-secondary">Refund</button>
+    <button class="btn btn-accent">Fulfill order</button>
+  </div>
+</aside>
+
+<script src="../js/icons.js"></script><script src="../js/data.js"></script><script src="../js/layout.js"></script>
+<script>
+window.PAGE_DEPTH = 1; renderLayout("orders");
+["i1","i2","i3","i4"].forEach((k,i)=>document.getElementById(k).innerHTML=icon(["cart","alert","truck","dollar"][i],18));
+document.getElementById("exportBtn").innerHTML = icon("download",14)+" Export CSV";
+document.getElementById("newBtn").innerHTML = icon("plus",14)+" Create order";
+["c1","c2","c3"].forEach(k=>document.getElementById(k).innerHTML=icon("chevron",13));
+document.getElementById("closeDr").innerHTML = icon("x",18);
+
+const body = document.getElementById("body");
+let filter="all", search="";
+function badge(s){const m={paid:["active","Paid"],processing:["scheduled","Processing"],pending:["low","Pending"],shipped:["scheduled","Shipped"],delivered:["active","Delivered"],refunded:["out","Refunded"],cancelled:["draft","Cancelled"]};const [c,l]=m[s]||["draft",s];return `<span class="status ${c}">${l}</span>`;}
+const flags={US:"🇺🇸",ES:"🇪🇸",UK:"🇬🇧",IN:"🇮🇳",JP:"🇯🇵",AU:"🇦🇺",BR:"🇧🇷",CA:"🇨🇦"};
+function render(){
+  const rows = MOCK.orders.filter(o => (filter==="all"||o.status===filter) && (!search || (o.id+o.customer+o.email).toLowerCase().includes(search.toLowerCase())));
+  body.innerHTML = rows.map(o=>`
+    <tr style="cursor:pointer" data-id="${o.id}">
+      <td onclick="event.stopPropagation()"><input type="checkbox" class="cb"/></td>
+      <td><b style="font-family:var(--font-mono);font-size:13px">${o.id}</b><div class="sub">${o.items} item${o.items>1?"s":""}</div></td>
+      <td><span class="sub">${o.date}</span></td>
+      <td><b>${o.customer}</b><div class="sub">${o.email}</div></td>
+      <td><span class="country-flag">${flags[o.country]||"🌐"}</span>${o.channel}</td>
+      <td><span class="sub">${o.payment}</span></td>
+      <td>${badge(o.status)}</td>
+      <td style="text-align:right;font-weight:600">$${o.total.toFixed(2)}</td>
+      <td><button class="icon-btn">${icon("more",16)}</button></td>
+    </tr>`).join("");
+  document.getElementById("shown").textContent=rows.length;
+  body.querySelectorAll("tr").forEach(tr=>tr.addEventListener("click",()=>openOrder(tr.dataset.id)));
+}
+function openOrder(id){
+  const o = MOCK.orders.find(x=>x.id===id); if(!o) return;
+  document.getElementById("drTitle").textContent=`Order ${o.id}`;
+  document.getElementById("drSub").textContent=`${o.date} · ${o.customer}`;
+  document.getElementById("drBody").innerHTML=`
+    <div style="display:flex;gap:8px;margin-bottom:16px">${badge(o.status)}<span class="status scheduled">${o.payment}</span></div>
+    <h3 style="margin-bottom:8px">Customer</h3>
+    <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:16px">
+      <b>${o.customer}</b><div class="sub">${o.email} · ${flags[o.country]||""} ${o.country}</div>
+    </div>
+    <h3 style="margin-bottom:8px">Items (${o.items})</h3>
+    <div class="list" style="background:var(--surface-2);border:1px solid var(--border);border-radius:10px;margin-bottom:16px">
+      ${MOCK.products.slice(0,o.items).map(p=>`
+        <div class="list-item" style="padding:10px 14px">
+          <div class="thumb">${p.emoji}</div><div class="meta"><b>${p.name}</b><span>${p.brand}</span></div>
+          <div class="price">$${p.price.toFixed(2)}</div>
+        </div>`).join("")}
+    </div>
+    <h3 style="margin-bottom:8px">Summary</h3>
+    <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:13px">
+      <div style="display:flex;justify-content:space-between;padding:4px 0"><span>Subtotal</span><b>$${(o.total*0.88).toFixed(2)}</b></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0"><span>Shipping</span><b>$8.00</b></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0"><span>Tax</span><b>$${(o.total*0.08).toFixed(2)}</b></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0 0;border-top:1px solid var(--border);margin-top:6px"><b>Total</b><b style="font-size:16px">$${o.total.toFixed(2)}</b></div>
+    </div>`;
+  document.getElementById("dr").classList.add("open");
+  document.getElementById("db").classList.add("open");
+}
+document.getElementById("closeDr").addEventListener("click",()=>{document.getElementById("dr").classList.remove("open");document.getElementById("db").classList.remove("open");});
+document.getElementById("db").addEventListener("click",()=>{document.getElementById("dr").classList.remove("open");document.getElementById("db").classList.remove("open");});
+document.querySelectorAll("#statusTabs button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("#statusTabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");filter=b.dataset.f;render();}));
+document.getElementById("search").addEventListener("input",e=>{search=e.target.value;render();});
+document.getElementById("exportBtn").addEventListener("click",()=>toast("Exporting orders to CSV..."));
+render();
+</script>
+</body></html>

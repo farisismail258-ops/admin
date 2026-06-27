@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Homepage Builder — Glow Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+</head><body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="page">
+      <div class="page-header">
+        <div class="title-block"><div class="crumbs">Content · Homepage builder</div><h1>Homepage builder</h1><p>Drag-and-drop sections that compose your storefront homepage.</p></div>
+        <div class="page-actions"><div class="tabs"><button class="active">Desktop</button><button>Tablet</button><button>Mobile</button></div><button class="btn btn-secondary">Preview</button><button class="btn btn-accent">Publish</button></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><div class="left"><h2>Sections</h2><p>${"Drag to reorder"}</p></div><button class="btn btn-secondary btn-sm" id="addBtn"></button></div>
+          <div class="card-body"><div class="builder-list" id="sec"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="left"><h2>Live preview</h2><p>lumiere.shop</p></div></div>
+          <div class="card-body">
+            <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px">
+              <div style="height:160px;border-radius:10px;background:var(--grad-2);display:grid;place-items:center;color:white;font-weight:700;font-size:20px">Glow that lasts</div>
+              <div style="height:80px;border-radius:10px;background:var(--grad-1);display:grid;place-items:center;color:white;font-weight:600">Summer Glow Edit · 18 products</div>
+              <div style="display:flex;gap:8px;font-size:11px;color:var(--text-3);padding:8px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)"><span>✓ Free shipping</span><span>✓ 30-day returns</span><span>✓ Cruelty-free</span></div>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">${[1,2,3,4].map(()=>`<div style="height:90px;border-radius:8px;background:var(--surface);border:1px solid var(--border)"></div>`).join("")}</div>
+              <div style="height:60px;border-radius:10px;background:var(--surface);border:1px solid var(--border);display:grid;place-items:center;color:var(--text-3);font-size:12px">★ ★ ★ ★ ★ Testimonials</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/icons.js"></script><script src="../js/data.js"></script><script src="../js/layout.js"></script>
+<script>
+window.PAGE_DEPTH=1;renderLayout("homepage");
+document.getElementById("addBtn").innerHTML=icon("plus",13)+" Add section";
+document.getElementById("sec").innerHTML=MOCK.homepageSections.map(s=>`
+  <div class="builder-item">
+    <span class="grip">${icon("menu",16)}</span>
+    <div class="icon-box">${icon("layout",16)}</div>
+    <div class="meta"><b>${s.type}</b><span>${s.title} · ${s.subtitle}</span></div>
+    <div class="toggle ${s.visible?"on":""}"></div>
+    <button class="btn btn-ghost btn-sm">${icon("edit",13)}</button>
+  </div>`).join("");
+document.querySelectorAll(".toggle").forEach(t=>t.addEventListener("click",()=>t.classList.toggle("on")));
+</script></body></html>

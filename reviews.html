@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Reviews — Glow Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+</head><body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="page">
+      <div class="page-header">
+        <div class="title-block"><div class="crumbs">Sales · Reviews</div><h1>Reviews</h1><p>Approve, reply, pin, and feature customer reviews.</p></div>
+        <div class="page-actions"><button class="btn btn-secondary">Settings</button></div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">Avg rating</span><div class="kpi-icon amber" id="i1"></div></div><div class="kpi-value">4.8 ★</div></div>
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">Total reviews</span><div class="kpi-icon violet" id="i2"></div></div><div class="kpi-value">3,492</div></div>
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">Pending</span><div class="kpi-icon blue" id="i3"></div></div><div class="kpi-value">28</div></div>
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">Reply rate</span><div class="kpi-icon green" id="i4"></div></div><div class="kpi-value">92%</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head" style="padding:14px 20px">
+          <div class="tabs" id="tabs"><button class="active" data-f="all">All</button><button data-f="pending">Pending · 28</button><button data-f="approved">Approved · 3,420</button><button data-f="rejected">Rejected · 44</button></div>
+        </div>
+        <div id="list"></div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/icons.js"></script><script src="../js/data.js"></script><script src="../js/layout.js"></script>
+<script>
+window.PAGE_DEPTH=1;renderLayout("reviews");
+["i1","i2","i3","i4"].forEach((k,i)=>document.getElementById(k).innerHTML=icon(["star","message","alert","heart"][i],18));
+let filter="all";
+function render(){
+  const rows=MOCK.reviews.filter(r=>filter==="all"||r.status===filter);
+  document.getElementById("list").innerHTML=rows.map(r=>`
+    <div class="review-card">
+      <div class="avatar">${r.user.split(" ").map(x=>x[0]).join("")}</div>
+      <div class="body">
+        <div class="head-row">
+          <b>${r.user}</b>
+          <span class="stars">${"★".repeat(r.stars)}${"☆".repeat(5-r.stars)}</span>
+          <span class="sub" style="color:var(--text-3);font-size:12px">on ${r.product} · ${r.date}</span>
+          <span class="status ${r.status==="approved"?"active":r.status==="pending"?"low":"out"}" style="margin-left:auto">${r.status}</span>
+        </div>
+        <div class="text">${r.text}</div>
+        <div class="actions">
+          ${r.status!=="approved"?`<button class="btn btn-secondary btn-sm">${icon("plus",13)} Approve</button>`:""}
+          ${r.status!=="rejected"?`<button class="btn btn-secondary btn-sm" style="color:var(--danger)">${icon("x",13)} Reject</button>`:""}
+          <button class="btn btn-ghost btn-sm">${icon("message",13)} Reply</button>
+          <button class="btn btn-ghost btn-sm">${icon("star",13)} Feature</button>
+        </div>
+      </div>
+    </div>`).join("");
+}
+document.querySelectorAll("#tabs button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("#tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");filter=b.dataset.f;render();}));
+render();
+</script></body></html>

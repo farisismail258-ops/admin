@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Store Settings — Glow Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+</head><body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="page">
+      <div class="page-header">
+        <div class="title-block"><div class="crumbs">System · Settings</div><h1>Store settings</h1><p>Brand, payments, taxes, languages, and integrations.</p></div>
+        <div class="page-actions"><button class="btn btn-accent">Save changes</button></div>
+      </div>
+
+      <div class="settings-grid">
+        <nav class="settings-nav">
+          <a class="active" href="#general">${"⚙"} General</a>
+          <a href="#brand">🎨 Brand</a>
+          <a href="#payments">💳 Payments</a>
+          <a href="#taxes">📊 Taxes</a>
+          <a href="#languages">🌐 Languages</a>
+          <a href="#integrations">🔗 Integrations</a>
+          <a href="#legal">📜 Legal</a>
+        </nav>
+        <div>
+          <div class="card settings-card" id="general">
+            <div class="card-head"><div class="left"><h2>General</h2><p>Basic store info</p></div></div>
+            <div class="card-body">
+              <div class="field"><label>Store name</label><input value="Lumière Skincare"/></div>
+              <div class="field-row">
+                <div class="field"><label>Contact email</label><input value="hello@lumiere.shop"/></div>
+                <div class="field"><label>Phone</label><input value="+1 (415) 555-0182"/></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label>Currency</label><select><option>USD ($)</option><option>EUR (€)</option><option>GBP (£)</option></select></div>
+                <div class="field"><label>Timezone</label><select><option>(UTC-08:00) Pacific Time</option><option>(UTC) London</option></select></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card settings-card" id="payments">
+            <div class="card-head"><div class="left"><h2>Payments</h2><p>Providers and checkout options</p></div></div>
+            <div class="card-body">
+              <div class="setting-row"><div class="icon-box" style="width:38px;height:38px;border-radius:8px;background:var(--info-50);color:var(--info);display:grid;place-items:center">💳</div><div class="meta"><b>Stripe</b><span>Connected · Visa, Mastercard, Amex</span></div><span class="status active">Active</span></div>
+              <div class="setting-row"><div class="icon-box" style="width:38px;height:38px;border-radius:8px;background:var(--info-50);color:var(--info);display:grid;place-items:center">🅿️</div><div class="meta"><b>PayPal</b><span>Connected</span></div><span class="status active">Active</span></div>
+              <div class="setting-row"><div class="icon-box" style="width:38px;height:38px;border-radius:8px;background:var(--info-50);color:var(--info);display:grid;place-items:center">🍎</div><div class="meta"><b>Apple Pay</b><span>Enabled via Stripe</span></div><div class="toggle on"></div></div>
+              <div class="setting-row"><div class="icon-box" style="width:38px;height:38px;border-radius:8px;background:var(--info-50);color:var(--info);display:grid;place-items:center">G</div><div class="meta"><b>Google Pay</b><span>Enabled via Stripe</span></div><div class="toggle on"></div></div>
+              <div class="setting-row"><div class="icon-box" style="width:38px;height:38px;border-radius:8px;background:var(--info-50);color:var(--info);display:grid;place-items:center">K</div><div class="meta"><b>Klarna</b><span>Pay later in 4 installments</span></div><button class="btn btn-secondary btn-sm">Connect</button></div>
+            </div>
+          </div>
+
+          <div class="card settings-card" id="taxes">
+            <div class="card-head"><div class="left"><h2>Taxes</h2><p>Tax calculation rules</p></div></div>
+            <div class="card-body">
+              <div class="setting-row"><div class="meta"><b>Calculate taxes automatically</b><span>Based on shipping destination</span></div><div class="toggle on"></div></div>
+              <div class="setting-row"><div class="meta"><b>Show prices including tax</b><span>For VAT regions</span></div><div class="toggle on"></div></div>
+              <div class="setting-row"><div class="meta"><b>Charge tax on shipping</b><span></span></div><div class="toggle"></div></div>
+            </div>
+          </div>
+
+          <div class="card settings-card" id="integrations">
+            <div class="card-head"><div class="left"><h2>Integrations</h2><p>Connected apps</p></div></div>
+            <div class="card-body">
+              <div class="setting-row"><div class="icon-box" style="width:38px;height:38px;border-radius:8px;background:var(--success-50);color:var(--success);display:grid;place-items:center">📊</div><div class="meta"><b>Google Analytics 4</b><span>G-XXXXXX1234</span></div><span class="status active">Connected</span></div>
+              <div class="setting-row"><div class="icon-box" style="width:38px;height:38px;border-radius:8px;background:var(--info-50);color:var(--info);display:grid;place-items:center">📷</div><div class="meta"><b>Meta Pixel</b><span>Conversion tracking</span></div><span class="status active">Connected</span></div>
+              <div class="setting-row"><div class="icon-box" style="width:38px;height:38px;border-radius:8px;background:var(--warning-50);color:#c97a07;display:grid;place-items:center">📧</div><div class="meta"><b>Klaviyo</b><span>Email automation</span></div><span class="status active">Connected</span></div>
+              <div class="setting-row"><div class="icon-box" style="width:38px;height:38px;border-radius:8px;background:var(--danger-50);color:var(--danger);display:grid;place-items:center">📱</div><div class="meta"><b>TikTok for Business</b></div><button class="btn btn-secondary btn-sm">Connect</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/icons.js"></script><script src="../js/data.js"></script><script src="../js/layout.js"></script>
+<script>
+window.PAGE_DEPTH=1;renderLayout("settings");
+document.querySelectorAll(".toggle").forEach(t=>t.addEventListener("click",()=>t.classList.toggle("on")));
+document.querySelectorAll(".settings-nav a").forEach(a=>a.addEventListener("click",()=>{document.querySelectorAll(".settings-nav a").forEach(x=>x.classList.remove("active"));a.classList.add("active");}));
+</script></body></html>

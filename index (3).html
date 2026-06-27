@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard — Glow Admin</title>
+  <meta name="description" content="Admin dashboard for Lumière Skincare e-commerce store" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/admin.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main">
+      <header class="topbar" id="topbar"></header>
+      <div class="page">
+
+        <div class="page-header">
+          <div class="title-block">
+            <div class="crumbs">Glow Admin · Overview</div>
+            <h1>Good afternoon, Aria 👋</h1>
+            <p>Here's what's happening with Lumière Skincare today.</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-secondary">${''}<span id="rangeIcon"></span>Last 30 days</button>
+            <button class="btn btn-secondary" id="exportBtn"><span id="dlIcon"></span>Export</button>
+            <a class="btn btn-accent" href="pages/products.html"><span id="plusIcon"></span>New product</a>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpi-grid" id="kpiGrid"></div>
+
+        <!-- Sales + channel mix -->
+        <div class="grid-2">
+          <section class="card">
+            <div class="card-head">
+              <div class="left"><h2>Revenue overview</h2><p>Daily sales and revenue for the last 30 days</p></div>
+              <div class="tabs"><button class="active">Revenue</button><button>Orders</button><button>AOV</button></div>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap"><canvas id="revenueChart"></canvas></div>
+            </div>
+          </section>
+          <section class="card">
+            <div class="card-head"><div class="left"><h2>Channel mix</h2><p>Where customers are coming from</p></div></div>
+            <div class="card-body">
+              <div class="chart-wrap"><canvas id="channelChart"></canvas></div>
+              <div class="legend" style="margin-top:14px;">
+                <span class="legend-item"><span class="sw" style="background:#635bff"></span>Direct · 54%</span>
+                <span class="legend-item"><span class="sw" style="background:#00d4ff"></span>Organic · 22%</span>
+                <span class="legend-item"><span class="sw" style="background:#1ec48b"></span>Social · 14%</span>
+                <span class="legend-item"><span class="sw" style="background:#ffb547"></span>Email · 10%</span>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Orders + customer growth -->
+        <div class="grid-row">
+          <section class="card">
+            <div class="card-head"><div class="left"><h2>Orders by month</h2><p>This year</p></div></div>
+            <div class="card-body"><div class="chart-wrap"><canvas id="ordersChart"></canvas></div></div>
+          </section>
+          <section class="card">
+            <div class="card-head"><div class="left"><h2>Customer growth</h2><p>Total registered customers</p></div></div>
+            <div class="card-body"><div class="chart-wrap"><canvas id="custChart"></canvas></div></div>
+          </section>
+        </div>
+
+        <!-- Top products + recent orders -->
+        <div class="grid-2">
+          <section class="card">
+            <div class="card-head">
+              <div class="left"><h2>Recent orders</h2><p>Latest activity from your store</p></div>
+              <a class="btn btn-ghost btn-sm" href="pages/orders.html">View all →</a>
+            </div>
+            <table>
+              <thead><tr><th>Order</th><th>Customer</th><th>Status</th><th>Items</th><th style="text-align:right">Total</th></tr></thead>
+              <tbody id="ordersBody"></tbody>
+            </table>
+          </section>
+          <section class="card">
+            <div class="card-head">
+              <div class="left"><h2>Best sellers</h2><p>By units sold this month</p></div>
+            </div>
+            <div class="list" id="topList"></div>
+          </section>
+        </div>
+
+        <!-- Reviews + perf -->
+        <div class="grid-row">
+          <section class="card">
+            <div class="card-head"><div class="left"><h2>Product performance</h2><p>Units sold by top products</p></div></div>
+            <div class="card-body"><div class="chart-wrap"><canvas id="perfChart"></canvas></div></div>
+          </section>
+          <section class="card">
+            <div class="card-head"><div class="left"><h2>Recent reviews</h2><p>Newest customer feedback</p></div><a class="btn btn-ghost btn-sm" href="pages/reviews.html">View all →</a></div>
+            <div class="list" id="reviewList"></div>
+          </section>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="js/icons.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/layout.js"></script>
+  <script>
+    window.PAGE_DEPTH = 0;
+    renderLayout("dashboard");
+    document.getElementById("rangeIcon").innerHTML = icon("chevron", 14);
+    document.getElementById("dlIcon").innerHTML = icon("download", 14);
+    document.getElementById("plusIcon").innerHTML = icon("plus", 14);
+    document.getElementById("exportBtn").addEventListener("click", () => toast("Exporting overview report..."));
+
+    // KPIs
+    const kpiDefs = [
+      { k: "revenue",     label: "Revenue",        color: "violet", ic: "dollar"  },
+      { k: "orders",      label: "Orders",         color: "blue",   ic: "cart"    },
+      { k: "customers",   label: "Customers",      color: "green",  ic: "users"   },
+      { k: "products",    label: "Products",       color: "violet", ic: "package" },
+      { k: "reviews",     label: "Reviews",        color: "amber",  ic: "star"    },
+      { k: "lowStock",    label: "Low stock",      color: "rose",   ic: "alert"   },
+      { k: "subscribers", label: "Subscribers",    color: "blue",   ic: "mail"    },
+      { k: "promos",      label: "Active promos",  color: "green",  ic: "ticket"  },
+    ];
+    const grid = document.getElementById("kpiGrid");
+    kpiDefs.forEach(d => {
+      const k = MOCK.kpis[d.k];
+      const up = k.delta >= 0;
+      grid.insertAdjacentHTML("beforeend", `
+        <div class="kpi">
+          <div class="kpi-head">
+            <span class="kpi-label">${d.label}</span>
+            <div class="kpi-icon ${d.color}">${icon(d.ic)}</div>
+          </div>
+          <div class="kpi-value">${k.value}</div>
+          <div class="kpi-meta">
+            <span class="delta ${up ? "up" : "down"}">${icon(up ? "arrowUp" : "arrowDown", 12)}${Math.abs(k.delta)}%</span>
+            <span class="sub">${k.sub}</span>
+          </div>
+          <canvas class="spark" data-spark></canvas>
+        </div>
+      `);
+    });
+
+    // Recent orders table
+    const sb = document.getElementById("ordersBody");
+    MOCK.recentOrders.forEach(o => {
+      sb.insertAdjacentHTML("beforeend", `
+        <tr>
+          <td><b>${o.id}</b><div class="sub">${o.date}</div></td>
+          <td>${o.customer}<div class="sub">${o.email}</div></td>
+          <td><span class="status ${o.status === 'paid' || o.status === 'delivered' ? 'active' : o.status === 'pending' ? 'low' : o.status === 'refunded' ? 'out' : 'scheduled'}">${o.status}</span></td>
+          <td>${o.items}</td>
+          <td style="text-align:right;font-weight:600">$${o.total.toFixed(2)}</td>
+        </tr>`);
+    });
+
+    // Top sellers list
+    const tl = document.getElementById("topList");
+    MOCK.topProducts.forEach(p => {
+      const up = p.growth >= 0;
+      tl.insertAdjacentHTML("beforeend", `
+        <div class="list-item">
+          <div class="thumb">${p.emoji}</div>
+          <div class="meta"><b>${p.name}</b><span>${p.brand} · ${p.sold} sold</span></div>
+          <div style="text-align:right">
+            <div class="price">$${p.price}</div>
+            <span class="delta ${up ? 'up' : 'down'}">${icon(up ? 'arrowUp' : 'arrowDown',12)}${Math.abs(p.growth)}%</span>
+          </div>
+        </div>`);
+    });
+
+    // Reviews list
+    const rl = document.getElementById("reviewList");
+    MOCK.recentReviews.forEach(r => {
+      rl.insertAdjacentHTML("beforeend", `
+        <div class="list-item" style="align-items:flex-start">
+          <div class="thumb">${"★".repeat(r.stars)}</div>
+          <div class="meta">
+            <b>${r.product}</b>
+            <span>${r.user} · <span class="stars">${"★".repeat(r.stars)}${"☆".repeat(5-r.stars)}</span></span>
+            <p style="margin:4px 0 0;font-size:13px;color:var(--text-2)">${r.text}</p>
+          </div>
+        </div>`);
+    });
+
+    // ---- Charts ----
+    function makeGradient(ctx, color) {
+      const g = ctx.createLinearGradient(0, 0, 0, 280);
+      g.addColorStop(0, color + "55"); g.addColorStop(1, color + "00");
+      return g;
+    }
+    let charts = [];
+    function buildCharts() {
+      charts.forEach(c => c.destroy()); charts = [];
+      chartDefaults();
+      const c = chartColors();
+
+      // Revenue area
+      const r = document.getElementById("revenueChart");
+      const rctx = r.getContext("2d");
+      const labels = Array.from({length: 30}, (_, i) => `${i+1}`);
+      charts.push(new Chart(r, {
+        type: "line",
+        data: { labels, datasets: [{
+          data: MOCK.sales30d, borderColor: c.primary, backgroundColor: makeGradient(rctx, c.primary),
+          borderWidth: 2.5, tension: .4, fill: true, pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: c.primary,
+        }]},
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: "#0a2540", padding: 10, displayColors: false, callbacks: { label: (ctx) => "$" + ctx.parsed.y.toLocaleString() } } },
+          scales: { x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true } }, y: { grid: { color: c.border }, ticks: { callback: v => "$" + (v/1000) + "k" } } } }
+      }));
+
+      // Channel doughnut
+      charts.push(new Chart(document.getElementById("channelChart"), {
+        type: "doughnut",
+        data: { labels: ["Direct","Organic","Social","Email"], datasets: [{ data: MOCK.channelMix, backgroundColor: [c.primary, c.accent, c.success, c.warning], borderWidth: 0, hoverOffset: 6 }]},
+        options: { responsive: true, maintainAspectRatio: false, cutout: "72%", plugins: { legend: { display: false } } }
+      }));
+
+      // Orders bars
+      charts.push(new Chart(document.getElementById("ordersChart"), {
+        type: "bar",
+        data: { labels: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+          datasets: [{ data: MOCK.ordersBy, backgroundColor: c.primary, borderRadius: 6, barThickness: 18 }]},
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: c.border } } } }
+      }));
+
+      // Customers line
+      charts.push(new Chart(document.getElementById("custChart"), {
+        type: "line",
+        data: { labels: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+          datasets: [{ data: MOCK.customers12m, borderColor: c.success, backgroundColor: makeGradient(document.getElementById("custChart").getContext("2d"), c.success), borderWidth: 2.5, tension: .4, fill: true, pointRadius: 0 }]},
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: c.border } } } }
+      }));
+
+      // Performance horizontal bar
+      charts.push(new Chart(document.getElementById("perfChart"), {
+        type: "bar",
+        data: { labels: MOCK.topProducts.map(p => p.name), datasets: [{ data: MOCK.topProducts.map(p => p.sold), backgroundColor: [c.primary, c.accent, c.success, c.warning, c.danger], borderRadius: 6, barThickness: 18 }]},
+        options: { indexAxis: "y", responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: c.border } }, y: { grid: { display: false } } } }
+      }));
+
+      // Sparklines
+      document.querySelectorAll("[data-spark]").forEach((el, idx) => {
+        const seed = [12,15,11,18,17,22,19,25,23,28,32,30,35,38,42];
+        const data = seed.map(v => v + (idx*3) + Math.random()*6);
+        charts.push(new Chart(el, {
+          type: "line",
+          data: { labels: data.map((_,i)=>i), datasets: [{ data, borderColor: c.primary, backgroundColor: makeGradient(el.getContext("2d"), c.primary), borderWidth: 2, tension: .4, fill: true, pointRadius: 0 }]},
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false } } }
+        }));
+      });
+    }
+    buildCharts();
+    window.addEventListener("theme-changed", buildCharts);
+  </script>
+</body>
+</html>

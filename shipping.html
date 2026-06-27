@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Shipping — Glow Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+</head><body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="page">
+      <div class="page-header">
+        <div class="title-block"><div class="crumbs">Sales · Shipping</div><h1>Shipping</h1><p>Zones, rates, carriers, packaging, and label printing.</p></div>
+        <div class="page-actions"><button class="btn btn-secondary">Test rates</button><button class="btn btn-accent" id="newBtn"></button></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><div class="left"><h2>Shipping zones</h2><p>5 zones · 108 countries</p></div></div>
+          <table>
+            <thead><tr><th>Zone</th><th>Countries</th><th>Rates</th><th>Cost</th><th style="width:48px"></th></tr></thead>
+            <tbody id="zbody"></tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="left"><h2>Carriers</h2><p>Connected accounts</p></div></div>
+          <div class="list">
+            <div class="list-item"><div class="thumb">📦</div><div class="meta"><b>USPS</b><span>Connected · domestic</span></div><span class="status active">Active</span></div>
+            <div class="list-item"><div class="thumb">🚚</div><div class="meta"><b>UPS</b><span>Connected · domestic + intl</span></div><span class="status active">Active</span></div>
+            <div class="list-item"><div class="thumb">✈️</div><div class="meta"><b>DHL Express</b><span>Connected · international</span></div><span class="status active">Active</span></div>
+            <div class="list-item"><div class="thumb">📮</div><div class="meta"><b>Royal Mail</b><span>Not connected</span></div><button class="btn btn-secondary btn-sm">Connect</button></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="left"><h2>Packaging</h2><p>Default boxes &amp; mailers</p></div></div>
+        <div class="card-body">
+          <div class="card-grid">
+            <div class="tile"><div class="cover" style="background:var(--grad-3);font-size:36px">📦</div><h3>Small box</h3><div class="sub">8 × 6 × 3 in · 4 oz</div></div>
+            <div class="tile"><div class="cover" style="background:var(--grad-2);font-size:36px">📦</div><h3>Medium box</h3><div class="sub">12 × 9 × 4 in · 6 oz</div></div>
+            <div class="tile"><div class="cover" style="background:var(--grad-1);font-size:36px">📦</div><h3>Large box</h3><div class="sub">16 × 12 × 6 in · 9 oz</div></div>
+            <div class="tile"><div class="cover" style="background:linear-gradient(135deg,#1ec48b,#00d4ff);font-size:36px">✉️</div><h3>Padded mailer</h3><div class="sub">10 × 7 in · 2 oz</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/icons.js"></script><script src="../js/data.js"></script><script src="../js/layout.js"></script>
+<script>
+window.PAGE_DEPTH=1;renderLayout("shipping");
+document.getElementById("newBtn").innerHTML=icon("plus",14)+" New zone";
+document.getElementById("zbody").innerHTML=MOCK.zones.map(z=>`
+  <tr><td><b>${z.name}</b></td><td><span class="sub">${z.countries}</span></td><td>${z.rates}</td><td>${z.cost}</td><td><button class="icon-btn">${icon("more",16)}</button></td></tr>`).join("");
+</script></body></html>

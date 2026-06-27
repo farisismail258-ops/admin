@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Media Library — Glow Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+</head><body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="page">
+      <div class="page-header">
+        <div class="title-block"><div class="crumbs">Content · Media Library</div><h1>Media library</h1><p>Folders, search, tags, and bulk file management.</p></div>
+        <div class="page-actions"><button class="btn btn-secondary">New folder</button><button class="btn btn-accent" id="upBtn"></button></div>
+      </div>
+      <div class="card">
+        <div class="table-toolbar">
+          <div class="toolbar-search"><input placeholder="Search filename, tag..."/></div>
+          <button class="chip">Type <span id="c1"></span></button>
+          <button class="chip">Folder <span id="c2"></span></button>
+          <button class="chip">Sort: Newest <span id="c3"></span></button>
+        </div>
+        <div style="padding:16px"><div class="media-grid" id="grid"></div></div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/icons.js"></script><script src="../js/data.js"></script><script src="../js/layout.js"></script>
+<script>
+window.PAGE_DEPTH=1;renderLayout("media");
+document.getElementById("upBtn").innerHTML=icon("upload",14)+" Upload";
+["c1","c2","c3"].forEach(k=>document.getElementById(k).innerHTML=icon("chevron",13));
+const grads=["var(--grad-1)","var(--grad-2)","var(--grad-3)","linear-gradient(135deg,#f78fcb,#ffb547)"];
+document.getElementById("grid").innerHTML=MOCK.media.map((m,i)=>`
+  <div class="media-tile">
+    <div class="preview" style="background:${grads[i%grads.length]};color:white">${m.emoji}</div>
+    <div class="info"><b>${m.name}</b><span>${m.size} · ${m.date}</span></div>
+  </div>`).join("");
+</script></body></html>

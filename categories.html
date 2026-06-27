@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Categories — Glow Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+</head><body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="page">
+      <div class="page-header">
+        <div class="title-block"><div class="crumbs">Catalog · Categories</div><h1>Categories</h1><p>Organize your catalog into a clear, shoppable taxonomy.</p></div>
+        <div class="page-actions"><button class="btn btn-secondary">Reorder</button><button class="btn btn-accent" id="newBtn"></button></div>
+      </div>
+      <div class="card-grid" id="grid"></div>
+    </div>
+  </main>
+</div>
+<script src="../js/icons.js"></script><script src="../js/data.js"></script><script src="../js/layout.js"></script>
+<script>
+window.PAGE_DEPTH=1;renderLayout("categories");
+document.getElementById("newBtn").innerHTML=icon("plus",14)+" New category";
+document.getElementById("grid").innerHTML=MOCK.categories.map(c=>`
+  <div class="tile">
+    <div class="cover" style="background:var(--grad-2)">${c.image}</div>
+    <h3>${c.name}</h3>
+    <div class="sub">${c.products} products</div>
+    <div class="row">
+      <span class="status active">Visible</span>
+      <button class="icon-btn">${icon("more",16)}</button>
+    </div>
+  </div>`).join("");
+</script></body></html>

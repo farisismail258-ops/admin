@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Team &amp; Roles — Glow Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+</head><body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="page">
+      <div class="page-header">
+        <div class="title-block"><div class="crumbs">System · Team</div><h1>Team &amp; roles</h1><p>Owner, Admin, Manager, Staff — customizable per-area permissions.</p></div>
+        <div class="page-actions"><button class="btn btn-accent" id="newBtn"></button></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><div class="left"><h2>Team members</h2><p>${"5 members"}</p></div></div>
+          <table>
+            <thead><tr><th>Member</th><th>Role</th><th>Last active</th><th style="width:48px"></th></tr></thead>
+            <tbody id="body"></tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="left"><h2>Role permissions</h2><p>Manager role</p></div><select style="padding:6px 10px;border-radius:8px;border:1px solid var(--border-strong);background:var(--surface);font-size:13px"><option>Manager</option><option>Admin</option><option>Staff</option></select></div>
+          <div class="card-body">
+            ${["Products","Orders","Customers","Discounts","Reports","Settings","Apps","Themes"].map((n,i)=>`
+              <div class="setting-row"><div class="meta"><b>${n}</b><span>View, create, edit ${n.toLowerCase()}</span></div><div class="toggle ${i<5?"on":""}"></div></div>`).join("")}
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/icons.js"></script><script src="../js/data.js"></script><script src="../js/layout.js"></script>
+<script>
+window.PAGE_DEPTH=1;renderLayout("permissions");
+document.getElementById("newBtn").innerHTML=icon("plus",14)+" Invite member";
+const roleColor={Owner:"active",Admin:"scheduled",Manager:"low",Staff:"draft"};
+document.getElementById("body").innerHTML=MOCK.team.map(t=>`
+  <tr>
+    <td><div class="product-cell"><div class="thumb" style="background:var(--grad-3)">${t.avatar}</div><div><b>${t.name}</b><div class="sub">${t.email}</div></div></div></td>
+    <td><span class="status ${roleColor[t.role]}">${t.role}</span></td>
+    <td><span class="sub">${t.lastActive}</span></td>
+    <td><button class="icon-btn">${icon("more",16)}</button></td>
+  </tr>`).join("");
+document.querySelectorAll(".toggle").forEach(t=>t.addEventListener("click",()=>t.classList.toggle("on")));
+</script></body></html>

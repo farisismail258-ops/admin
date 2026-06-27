@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pages — Glow Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+</head><body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="page">
+      <div class="page-header">
+        <div class="title-block"><div class="crumbs">Content · Pages</div><h1>Pages &amp; content</h1><p>Static pages, legal copy, and editorial content.</p></div>
+        <div class="page-actions"><button class="btn btn-accent" id="newBtn"></button></div>
+      </div>
+      <div class="card">
+        <div class="table-toolbar"><div class="toolbar-search"><input placeholder="Search pages..."/></div></div>
+        <table>
+          <thead><tr><th style="width:38px"><input type="checkbox" class="cb"/></th><th>Title</th><th>Slug</th><th>Status</th><th>Last updated</th><th style="width:80px"></th></tr></thead>
+          <tbody id="body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/icons.js"></script><script src="../js/data.js"></script><script src="../js/layout.js"></script>
+<script>
+window.PAGE_DEPTH=1;renderLayout("pages-cms");
+document.getElementById("newBtn").innerHTML=icon("plus",14)+" New page";
+document.getElementById("body").innerHTML=MOCK.pages.map(p=>`
+  <tr>
+    <td><input type="checkbox" class="cb"/></td>
+    <td><b>${p.title}</b></td>
+    <td><span class="sub" style="font-family:var(--font-mono)">${p.slug}</span></td>
+    <td><span class="status ${p.status==="published"?"active":"draft"}">${p.status}</span></td>
+    <td><span class="sub">${p.updated}</span></td>
+    <td><button class="btn btn-secondary btn-sm">${icon("edit",13)} Edit</button></td>
+  </tr>`).join("");
+</script></body></html>

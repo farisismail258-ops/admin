@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Products — Glow Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main">
+      <header class="topbar" id="topbar"></header>
+      <div class="page">
+
+        <div class="page-header">
+          <div class="title-block">
+            <div class="crumbs">Catalog · Products</div>
+            <h1>Products</h1>
+            <p>Manage your skincare catalog, inventory, and merchandising.</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-secondary" id="importBtn"></button>
+            <button class="btn btn-secondary" id="exportBtn"></button>
+            <button class="btn btn-accent" id="newBtn"></button>
+          </div>
+        </div>
+
+        <!-- Status tabs -->
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-head" style="padding:14px 20px;border-bottom:1px solid var(--border)">
+            <div class="tabs" id="statusTabs">
+              <button class="active" data-f="all">All <span style="color:var(--text-3);font-weight:500">· 248</span></button>
+              <button data-f="active">Active · 198</button>
+              <button data-f="draft">Draft · 24</button>
+              <button data-f="low">Low stock · 14</button>
+              <button data-f="out">Out of stock · 6</button>
+              <button data-f="scheduled">Scheduled · 6</button>
+            </div>
+          </div>
+          <div class="table-toolbar">
+            <div class="toolbar-search"><input id="search" placeholder="Search by name, SKU, brand..."/></div>
+            <button class="chip" id="filterCat">Category <span id="catCh"></span></button>
+            <button class="chip" id="filterBrand">Brand <span id="brCh"></span></button>
+            <button class="chip">Tag <span id="tgCh"></span></button>
+            <button class="chip">Sort: Newest <span id="srCh"></span></button>
+            <div style="margin-left:auto;display:flex;gap:8px;align-items:center" id="bulkBar"></div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th style="width:38px"><input type="checkbox" class="cb" id="selectAll"/></th>
+                <th>Product</th>
+                <th>SKU</th>
+                <th>Category</th>
+                <th>Brand</th>
+                <th>Stock</th>
+                <th>Status</th>
+                <th style="text-align:right">Price</th>
+                <th style="width:48px"></th>
+              </tr>
+            </thead>
+            <tbody id="prodBody"></tbody>
+          </table>
+
+          <div class="pagination">
+            <div>Showing <b id="shown">12</b> of <b>248</b> products</div>
+            <div class="pager">
+              <button>‹</button><button class="active">1</button><button>2</button><button>3</button>…<button>21</button><button>›</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Drawer: new product -->
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="drawer" id="drawer">
+    <div class="drawer-head">
+      <div><h2>New product</h2><p style="margin:2px 0 0;font-size:12.5px;color:var(--text-3)">Add a new product to your catalog</p></div>
+      <button class="icon-btn" id="closeDrawer"></button>
+    </div>
+    <div class="drawer-body">
+      <div class="field"><label>Product name</label><input placeholder="e.g. Hydra-Glow Serum"/></div>
+      <div class="field-row">
+        <div class="field"><label>Brand</label><select><option>Lumière</option><option>Aurora</option><option>Pure Lab</option><option>Bloom</option></select></div>
+        <div class="field"><label>Category</label><select><option>Serums</option><option>Moisturizer</option><option>Cleansers</option><option>Masks</option><option>Sun care</option></select></div>
+      </div>
+      <div class="field"><label>Short description</label><textarea placeholder="A glowing one-liner customers will see in the product card."></textarea></div>
+      <div class="field-row">
+        <div class="field"><label>Price</label><input type="number" placeholder="0.00"/></div>
+        <div class="field"><label>Compare at</label><input type="number" placeholder="0.00"/></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>SKU</label><input placeholder="LUM-SER-001"/></div>
+        <div class="field"><label>Stock</label><input type="number" placeholder="0"/></div>
+      </div>
+      <div class="field"><label>Skin concerns</label>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <span class="chip">Acne</span><span class="chip">Dryness</span><span class="chip">Dark spots</span><span class="chip">Redness</span><span class="chip">Fine lines</span><span class="chip">+ Add</span>
+        </div>
+      </div>
+      <div class="field"><label>Tags</label><input placeholder="vegan, cruelty-free, sensitive-safe"/></div>
+    </div>
+    <div class="drawer-foot">
+      <button class="btn btn-ghost" id="cancelDrawer">Cancel</button>
+      <button class="btn btn-accent" id="saveProduct">Save product</button>
+    </div>
+  </aside>
+
+  <script src="../js/icons.js"></script>
+  <script src="../js/data.js"></script>
+  <script src="../js/layout.js"></script>
+  <script>
+    window.PAGE_DEPTH = 1;
+    renderLayout("products");
+
+    document.getElementById("importBtn").innerHTML = icon("upload",14) + " Import";
+    document.getElementById("exportBtn").innerHTML = icon("download",14) + " Export";
+    document.getElementById("newBtn").innerHTML = icon("plus",14) + " New product";
+    document.getElementById("catCh").innerHTML = icon("chevron",13);
+    document.getElementById("brCh").innerHTML = icon("chevron",13);
+    document.getElementById("tgCh").innerHTML = icon("chevron",13);
+    document.getElementById("srCh").innerHTML = icon("chevron",13);
+    document.getElementById("closeDrawer").innerHTML = icon("x",18);
+
+    const body = document.getElementById("prodBody");
+    let filter = "all"; let search = "";
+
+    function statusBadge(s) {
+      const map = { active: ["active","Active"], draft: ["draft","Draft"], low: ["low","Low stock"], out: ["out","Out of stock"], scheduled: ["scheduled","Scheduled"] };
+      const [cls, label] = map[s] || ["draft", s];
+      return `<span class="status ${cls}">${label}</span>`;
+    }
+
+    function render() {
+      const rows = MOCK.products.filter(p => {
+        if (filter !== "all" && p.status !== filter) return false;
+        if (search && ![p.name, p.brand, p.sku, p.cat].join(" ").toLowerCase().includes(search.toLowerCase())) return false;
+        return true;
+      });
+      body.innerHTML = rows.map(p => `
+        <tr>
+          <td><input type="checkbox" class="cb row-cb"/></td>
+          <td>
+            <div class="product-cell">
+              <div class="thumb">${p.emoji}</div>
+              <div><b>${p.name}</b><div class="sub">ID ${p.id}</div></div>
+            </div>
+          </td>
+          <td><span class="sub" style="font-family:var(--font-mono)">${p.sku}</span></td>
+          <td>${p.cat}</td>
+          <td>${p.brand}</td>
+          <td>${p.stock}</td>
+          <td>${statusBadge(p.status)}</td>
+          <td style="text-align:right;font-weight:600">$${p.price.toFixed(2)}</td>
+          <td><button class="icon-btn" title="More">${icon("more",16)}</button></td>
+        </tr>`).join("");
+      document.getElementById("shown").textContent = rows.length;
+      bindRowCBs();
+    }
+
+    function bindRowCBs() {
+      const cbs = document.querySelectorAll(".row-cb");
+      cbs.forEach(cb => cb.addEventListener("change", updateBulk));
+    }
+    function updateBulk() {
+      const checked = document.querySelectorAll(".row-cb:checked").length;
+      const bar = document.getElementById("bulkBar");
+      if (checked === 0) { bar.innerHTML = ""; return; }
+      bar.innerHTML = `
+        <span style="font-size:12.5px;color:var(--text-3)">${checked} selected</span>
+        <button class="btn btn-secondary btn-sm">${icon("edit",13)} Edit</button>
+        <button class="btn btn-secondary btn-sm">${icon("copy",13)} Duplicate</button>
+        <button class="btn btn-secondary btn-sm">${icon("eye",13)} Hide</button>
+        <button class="btn btn-secondary btn-sm" style="color:var(--danger)">${icon("trash",13)} Delete</button>
+      `;
+    }
+    document.getElementById("selectAll").addEventListener("change", e => {
+      document.querySelectorAll(".row-cb").forEach(cb => cb.checked = e.target.checked);
+      updateBulk();
+    });
+
+    document.querySelectorAll("#statusTabs button").forEach(b => b.addEventListener("click", () => {
+      document.querySelectorAll("#statusTabs button").forEach(x => x.classList.remove("active"));
+      b.classList.add("active"); filter = b.dataset.f; render();
+    }));
+    document.getElementById("search").addEventListener("input", e => { search = e.target.value; render(); });
+
+    // Drawer
+    const drawer = document.getElementById("drawer");
+    const back = document.getElementById("drawerBackdrop");
+    function openDr() { drawer.classList.add("open"); back.classList.add("open"); }
+    function closeDr() { drawer.classList.remove("open"); back.classList.remove("open"); }
+    document.getElementById("newBtn").addEventListener("click", openDr);
+    document.getElementById("closeDrawer").addEventListener("click", closeDr);
+    document.getElementById("cancelDrawer").addEventListener("click", closeDr);
+    back.addEventListener("click", closeDr);
+    document.getElementById("saveProduct").addEventListener("click", () => { closeDr(); toast("Product saved successfully"); });
+    document.getElementById("importBtn").addEventListener("click", () => toast("Import started — check Notifications"));
+    document.getElementById("exportBtn").addEventListener("click", () => toast("Exporting products to CSV..."));
+
+    render();
+  </script>
+</body>
+</html>

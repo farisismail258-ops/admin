@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Customers — Glow Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+</head><body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="page">
+      <div class="page-header">
+        <div class="title-block"><div class="crumbs">Sales · Customers</div><h1>Customers</h1><p>Profiles, lifetime value, segments, and history.</p></div>
+        <div class="page-actions">
+          <button class="btn btn-secondary" id="impBtn"></button>
+          <button class="btn btn-secondary" id="expBtn"></button>
+          <button class="btn btn-accent" id="newBtn"></button>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">All customers</span><div class="kpi-icon violet" id="i1"></div></div><div class="kpi-value">7,321</div><div class="kpi-meta"><span class="delta up">+6.8%</span></div></div>
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">VIP</span><div class="kpi-icon amber" id="i2"></div></div><div class="kpi-value">428</div><div class="kpi-meta"><span class="sub">spent &gt; $500</span></div></div>
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">Avg LTV</span><div class="kpi-icon green" id="i3"></div></div><div class="kpi-value">$284</div><div class="kpi-meta"><span class="delta up">+9.2%</span></div></div>
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">Repeat rate</span><div class="kpi-icon blue" id="i4"></div></div><div class="kpi-value">42%</div><div class="kpi-meta"><span class="delta up">+2.1%</span></div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head" style="padding:14px 20px">
+          <div class="tabs" id="tabs"><button class="active" data-f="all">All · 7,321</button><button data-f="VIP">VIP · 428</button><button data-f="Loyal">Loyal · 1,240</button><button data-f="Returning">Returning · 2,418</button><button data-f="New">New · 289</button></div>
+        </div>
+        <div class="table-toolbar">
+          <div class="toolbar-search"><input id="search" placeholder="Search by name, email, ID..."/></div>
+          <button class="chip">Country <span id="c1"></span></button>
+          <button class="chip">Spent <span id="c2"></span></button>
+          <button class="chip">Last order <span id="c3"></span></button>
+          <div style="margin-left:auto" id="bulk"></div>
+        </div>
+        <table>
+          <thead><tr><th style="width:38px"><input type="checkbox" class="cb"/></th><th>Customer</th><th>Country</th><th>Orders</th><th>Spent</th><th>Last order</th><th>Segment</th><th style="width:48px"></th></tr></thead>
+          <tbody id="body"></tbody>
+        </table>
+        <div class="pagination"><div>Showing <b id="shown">10</b> of <b>7,321</b></div><div class="pager"><button>‹</button><button class="active">1</button><button>2</button>…<button>733</button><button>›</button></div></div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/icons.js"></script><script src="../js/data.js"></script><script src="../js/layout.js"></script>
+<script>
+window.PAGE_DEPTH=1;renderLayout("customers");
+["i1","i2","i3","i4"].forEach((k,i)=>document.getElementById(k).innerHTML=icon(["users","star","dollar","refresh"][i],18));
+document.getElementById("impBtn").innerHTML=icon("upload",14)+" Import";
+document.getElementById("expBtn").innerHTML=icon("download",14)+" Export";
+document.getElementById("newBtn").innerHTML=icon("plus",14)+" New customer";
+["c1","c2","c3"].forEach(k=>document.getElementById(k).innerHTML=icon("chevron",13));
+const flags={US:"🇺🇸",ES:"🇪🇸",UK:"🇬🇧",IN:"🇮🇳",JP:"🇯🇵",AU:"🇦🇺",BR:"🇧🇷",CA:"🇨🇦"};
+const segBadge={VIP:"active",Loyal:"scheduled",Returning:"low",New:"draft"};
+let filter="all",search="";
+function render(){
+  const rows=MOCK.customers.filter(c=>(filter==="all"||c.segment===filter)&&(!search||(c.name+c.email+c.id).toLowerCase().includes(search.toLowerCase())));
+  document.getElementById("body").innerHTML=rows.map(c=>`
+    <tr>
+      <td><input type="checkbox" class="cb"/></td>
+      <td><div class="product-cell"><div class="thumb">${c.name.split(" ").map(n=>n[0]).join("")}</div><div><b>${c.name}</b><div class="sub">${c.email}</div></div></div></td>
+      <td><span class="country-flag">${flags[c.country]||"🌐"}</span>${c.country}</td>
+      <td>${c.orders}</td>
+      <td><b>$${c.spent.toFixed(2)}</b></td>
+      <td><span class="sub">${c.last}</span></td>
+      <td><span class="status ${segBadge[c.segment]||"draft"}">${c.segment}</span></td>
+      <td><button class="icon-btn">${icon("more",16)}</button></td>
+    </tr>`).join("");
+  document.getElementById("shown").textContent=rows.length;
+}
+document.querySelectorAll("#tabs button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("#tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");filter=b.dataset.f;render();}));
+document.getElementById("search").addEventListener("input",e=>{search=e.target.value;render();});
+document.getElementById("expBtn").addEventListener("click",()=>toast("Exporting customers..."));
+render();
+</script></body></html>

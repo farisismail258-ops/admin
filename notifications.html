@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Notifications — Glow Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+</head><body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="page">
+      <div class="page-header">
+        <div class="title-block"><div class="crumbs">System · Notifications</div><h1>Notifications</h1><p>All recent activity across orders, stock, reviews, and campaigns.</p></div>
+        <div class="page-actions"><button class="btn btn-secondary">Preferences</button><button class="btn btn-secondary" id="markBtn">Mark all read</button></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head" style="padding:14px 20px">
+            <div class="tabs"><button class="active">All</button><button>Unread · 3</button><button>Orders</button><button>Stock</button><button>Reviews</button><button>System</button></div>
+          </div>
+          <div id="list"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="left"><h2>Channels</h2><p>How you receive alerts</p></div></div>
+          <div class="card-body">
+            <div class="setting-row"><div class="meta"><b>In-app</b><span>Bell icon &amp; toast</span></div><div class="toggle on"></div></div>
+            <div class="setting-row"><div class="meta"><b>Email</b><span>aria@lumiere.shop</span></div><div class="toggle on"></div></div>
+            <div class="setting-row"><div class="meta"><b>SMS</b><span>+1 (415) 555-0182</span></div><div class="toggle"></div></div>
+            <div class="setting-row"><div class="meta"><b>Slack</b><span>#sales channel</span></div><div class="toggle on"></div></div>
+            <div class="setting-row"><div class="meta"><b>Mobile push</b><span>iOS &amp; Android app</span></div><div class="toggle"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/icons.js"></script><script src="../js/data.js"></script><script src="../js/layout.js"></script>
+<script>
+window.PAGE_DEPTH=1;renderLayout("notifications");
+const ic={order:["cart","violet"],stock:["alert","amber"],review:["star","green"],campaign:["mail","blue"],system:["settings","rose"]};
+function render(){
+  document.getElementById("list").innerHTML=MOCK.notifications.map(n=>{
+    const [name,color]=ic[n.type];
+    return `<div class="notif-item ${n.unread?"unread":""}">
+      <div class="icon-box kpi-icon ${color}">${icon(name,16)}</div>
+      <div class="body"><b>${n.title}</b><span>${n.body}</span></div>
+      <div class="time">${n.time}</div>
+    </div>`;}).join("");
+}
+document.getElementById("markBtn").addEventListener("click",()=>{MOCK.notifications.forEach(n=>n.unread=false);render();toast("All notifications marked as read");});
+document.querySelectorAll(".toggle").forEach(t=>t.addEventListener("click",()=>t.classList.toggle("on")));
+render();
+</script></body></html>

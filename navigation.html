@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Navigation — Glow Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+</head><body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="page">
+      <div class="page-header">
+        <div class="title-block"><div class="crumbs">Content · Navigation</div><h1>Navigation</h1><p>Header, footer, and dropdown menus.</p></div>
+        <div class="page-actions"><button class="btn btn-secondary">Preview</button><button class="btn btn-accent">Save</button></div>
+      </div>
+      <div class="grid-row" id="menus"></div>
+    </div>
+  </main>
+</div>
+<script src="../js/icons.js"></script><script src="../js/data.js"></script><script src="../js/layout.js"></script>
+<script>
+window.PAGE_DEPTH=1;renderLayout("navigation");
+document.getElementById("menus").innerHTML=MOCK.navMenus.map(m=>`
+  <div class="card">
+    <div class="card-head"><div class="left"><h2>${m.area}</h2><p>${m.items.length} links</p></div><button class="btn btn-secondary btn-sm">${icon("plus",13)} Add</button></div>
+    <div class="card-body"><div class="builder-list">${m.items.map(i=>`
+      <div class="builder-item">
+        <span class="grip">${icon("menu",16)}</span>
+        <div class="icon-box">${icon("external",16)}</div>
+        <div class="meta"><b>${i}</b><span>/${i.toLowerCase().replace(/ /g,"-")}</span></div>
+        <button class="btn btn-ghost btn-sm">${icon("edit",13)}</button>
+        <button class="btn btn-ghost btn-sm" style="color:var(--danger)">${icon("trash",13)}</button>
+      </div>`).join("")}</div></div>
+  </div>`).join("");
+</script></body></html>

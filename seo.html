@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>SEO Manager — Glow Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+</head><body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="page">
+      <div class="page-header">
+        <div class="title-block"><div class="crumbs">Content · SEO</div><h1>SEO manager</h1><p>Meta tags, slugs, OG images, sitemap, and structured data.</p></div>
+        <div class="page-actions"><button class="btn btn-secondary">View sitemap</button><button class="btn btn-accent">Save</button></div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">SEO score</span><div class="kpi-icon green" id="i1"></div></div><div class="kpi-value">92</div><div class="kpi-meta"><span class="delta up">+4</span></div></div>
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">Indexed pages</span><div class="kpi-icon violet" id="i2"></div></div><div class="kpi-value">312</div></div>
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">Broken links</span><div class="kpi-icon rose" id="i3"></div></div><div class="kpi-value">2</div></div>
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">Missing meta</span><div class="kpi-icon amber" id="i4"></div></div><div class="kpi-value">7</div></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><div class="left"><h2>Page meta — Homepage</h2><p>lumiere.shop /</p></div></div>
+          <div class="card-body">
+            <div class="field"><label>Title (60 char max)</label><input value="Lumière — Skincare for radiant, balanced skin"/></div>
+            <div class="field"><label>Description (160 char max)</label><textarea>Clean, science-backed skincare for every skin type. Free shipping on orders over $50. Cruelty-free and dermatologist-tested.</textarea></div>
+            <div class="field"><label>Canonical URL</label><input value="https://lumiere.shop/"/></div>
+            <div class="field-row">
+              <div class="field"><label>OG image</label><input placeholder="og-home.jpg"/></div>
+              <div class="field"><label>Twitter card</label><select><option>summary_large_image</option><option>summary</option></select></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="left"><h2>Google preview</h2><p>Search result mock</p></div></div>
+          <div class="card-body">
+            <div style="border:1px solid var(--border);border-radius:10px;padding:16px;background:var(--surface-2)">
+              <div style="font-size:12px;color:#0a8956">https://lumiere.shop › </div>
+              <div style="font-size:18px;color:#1a0dab;margin:4px 0">Lumière — Skincare for radiant, balanced skin</div>
+              <div style="font-size:13px;color:var(--text-2)">Clean, science-backed skincare for every skin type. Free shipping on orders over $50. Cruelty-free and dermatologist-tested.</div>
+            </div>
+            <h3 style="margin:20px 0 8px">Issues</h3>
+            <div class="list">
+              <div class="list-item"><div class="thumb" style="background:var(--warning-50);color:#c97a07">!</div><div class="meta"><b>7 product pages missing meta description</b><span>Auto-fix available</span></div><button class="btn btn-secondary btn-sm">Fix</button></div>
+              <div class="list-item"><div class="thumb" style="background:var(--danger-50);color:var(--danger)">×</div><div class="meta"><b>2 broken internal links</b><span>/old-collection, /retired-product</span></div><button class="btn btn-secondary btn-sm">View</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/icons.js"></script><script src="../js/data.js"></script><script src="../js/layout.js"></script>
+<script>
+window.PAGE_DEPTH=1;renderLayout("seo");
+["i1","i2","i3","i4"].forEach((k,i)=>document.getElementById(k).innerHTML=icon(["chart","search","alert","alert"][i],18));
+</script></body></html>

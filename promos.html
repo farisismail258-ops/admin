@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Promo codes — Glow Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+</head><body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="page">
+      <div class="page-header">
+        <div class="title-block"><div class="crumbs">Sales · Promo codes</div><h1>Promo codes</h1><p>Discount codes, free shipping, minimum spend, expiration, and usage limits.</p></div>
+        <div class="page-actions"><button class="btn btn-secondary" id="expBtn"></button><button class="btn btn-accent" id="newBtn"></button></div>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Code</th><th>Type</th><th>Value</th><th>Used / Limit</th><th>Expires</th><th>Status</th><th style="width:48px"></th></tr></thead>
+          <tbody id="body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/icons.js"></script><script src="../js/data.js"></script><script src="../js/layout.js"></script>
+<script>
+window.PAGE_DEPTH=1;renderLayout("promos");
+document.getElementById("expBtn").innerHTML=icon("download",14)+" Export";
+document.getElementById("newBtn").innerHTML=icon("plus",14)+" New code";
+const stmap={active:"active",scheduled:"scheduled",draft:"draft"};
+document.getElementById("body").innerHTML=MOCK.promos.map(p=>{
+  const pct=p.limit?Math.round(p.used/p.limit*100):0;
+  return `<tr>
+    <td><span style="font-family:var(--font-mono);background:var(--surface-2);padding:4px 8px;border-radius:6px;border:1px solid var(--border);font-weight:600">${p.code}</span></td>
+    <td>${p.type}</td>
+    <td><b>${p.value}</b></td>
+    <td>${p.used.toLocaleString()} ${p.limit?`/ ${p.limit.toLocaleString()}`:""}
+      ${p.limit?`<div class="bar" style="width:120px;margin-top:4px;height:5px;background:var(--surface-2);border-radius:99px;overflow:hidden"><div style="width:${pct}%;height:100%;background:var(--grad-1)"></div></div>`:""}
+    </td>
+    <td><span class="sub">${p.expires}</span></td>
+    <td><span class="status ${stmap[p.status]}">${p.status}</span></td>
+    <td><button class="icon-btn">${icon("more",16)}</button></td>
+  </tr>`;}).join("");
+</script></body></html>

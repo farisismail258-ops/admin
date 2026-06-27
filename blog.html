@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Blog — Glow Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+</head><body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="page">
+      <div class="page-header">
+        <div class="title-block"><div class="crumbs">Content · Blog</div><h1>Blog</h1><p>Editorial posts, guides, and ingredient stories.</p></div>
+        <div class="page-actions"><button class="btn btn-secondary">Categories</button><button class="btn btn-accent" id="newBtn"></button></div>
+      </div>
+      <div class="card">
+        <div class="card-head" style="padding:14px 20px">
+          <div class="tabs"><button class="active">All · 42</button><button>Published · 36</button><button>Drafts · 4</button><button>Scheduled · 2</button></div>
+        </div>
+        <table>
+          <thead><tr><th>Post</th><th>Author</th><th>Status</th><th>Date</th><th>Views</th><th style="width:80px"></th></tr></thead>
+          <tbody id="body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/icons.js"></script><script src="../js/data.js"></script><script src="../js/layout.js"></script>
+<script>
+window.PAGE_DEPTH=1;renderLayout("blog");
+document.getElementById("newBtn").innerHTML=icon("plus",14)+" Write post";
+const stmap={published:"active",draft:"draft",scheduled:"scheduled"};
+document.getElementById("body").innerHTML=MOCK.posts.map(p=>`
+  <tr>
+    <td><div class="product-cell"><div class="thumb" style="background:var(--grad-1)">${icon("book",16)}</div><div><b>${p.title}</b><div class="sub">/${p.title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40)}</div></div></div></td>
+    <td>${p.author}</td>
+    <td><span class="status ${stmap[p.status]}">${p.status}</span></td>
+    <td><span class="sub">${p.date}</span></td>
+    <td>${p.views.toLocaleString()}</td>
+    <td><button class="btn btn-secondary btn-sm">${icon("edit",13)} Edit</button></td>
+  </tr>`).join("");
+</script></body></html>

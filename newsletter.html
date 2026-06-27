@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Newsletter — Glow Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+</head><body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="page">
+      <div class="page-header">
+        <div class="title-block"><div class="crumbs">Marketing · Newsletter</div><h1>Newsletter</h1><p>Subscribers, segments, and import/export.</p></div>
+        <div class="page-actions"><button class="btn btn-secondary" id="impBtn"></button><button class="btn btn-secondary" id="expBtn"></button><button class="btn btn-accent" id="newBtn"></button></div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">Subscribers</span><div class="kpi-icon violet" id="i1"></div></div><div class="kpi-value">12,480</div><div class="kpi-meta"><span class="delta up">+5.6%</span></div></div>
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">Open rate</span><div class="kpi-icon green" id="i2"></div></div><div class="kpi-value">42%</div></div>
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">Click rate</span><div class="kpi-icon blue" id="i3"></div></div><div class="kpi-value">8.4%</div></div>
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">Unsubscribes</span><div class="kpi-icon rose" id="i4"></div></div><div class="kpi-value">214</div></div>
+      </div>
+
+      <div class="card">
+        <div class="table-toolbar">
+          <div class="toolbar-search"><input placeholder="Search by email or name..."/></div>
+          <button class="chip">Segment <span id="c1"></span></button>
+          <button class="chip">Status <span id="c2"></span></button>
+        </div>
+        <table>
+          <thead><tr><th style="width:38px"><input type="checkbox" class="cb"/></th><th>Email</th><th>Name</th><th>Segment</th><th>Joined</th><th>Status</th></tr></thead>
+          <tbody id="body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/icons.js"></script><script src="../js/data.js"></script><script src="../js/layout.js"></script>
+<script>
+window.PAGE_DEPTH=1;renderLayout("newsletter");
+["i1","i2","i3","i4"].forEach((k,i)=>document.getElementById(k).innerHTML=icon(["mail","eye","chart","alert"][i],18));
+document.getElementById("impBtn").innerHTML=icon("upload",14)+" Import";
+document.getElementById("expBtn").innerHTML=icon("download",14)+" Export";
+document.getElementById("newBtn").innerHTML=icon("plus",14)+" Add subscriber";
+["c1","c2"].forEach(k=>document.getElementById(k).innerHTML=icon("chevron",13));
+document.getElementById("body").innerHTML=MOCK.subscribers.map(s=>`
+  <tr>
+    <td><input type="checkbox" class="cb"/></td>
+    <td><b>${s.email}</b></td>
+    <td>${s.name}</td>
+    <td><span class="chip" style="padding:3px 8px">${s.segment}</span></td>
+    <td><span class="sub">${s.joined}</span></td>
+    <td><span class="status ${s.status==="subscribed"?"active":"out"}">${s.status}</span></td>
+  </tr>`).join("");
+</script></body></html>

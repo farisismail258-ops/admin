@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Inventory — Glow Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+</head><body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="page">
+      <div class="page-header">
+        <div class="title-block"><div class="crumbs">Catalog · Inventory</div><h1>Inventory</h1><p>Stock levels, low-stock alerts, and bulk adjustments across SKUs.</p></div>
+        <div class="page-actions"><button class="btn btn-secondary">Adjust stock</button><button class="btn btn-accent" id="newBtn"></button></div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">SKUs</span><div class="kpi-icon violet" id="i1"></div></div><div class="kpi-value">248</div></div>
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">Units on hand</span><div class="kpi-icon green" id="i2"></div></div><div class="kpi-value">18,420</div></div>
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">Low stock</span><div class="kpi-icon amber" id="i3"></div></div><div class="kpi-value">14</div></div>
+        <div class="kpi"><div class="kpi-head"><span class="kpi-label">Out of stock</span><div class="kpi-icon rose" id="i4"></div></div><div class="kpi-value">6</div></div>
+      </div>
+
+      <div class="card">
+        <div class="table-toolbar">
+          <div class="toolbar-search"><input id="search" placeholder="Search SKU, product..."/></div>
+          <button class="chip">Location <span id="c1"></span></button>
+          <button class="chip">Threshold <span id="c2"></span></button>
+        </div>
+        <table>
+          <thead><tr><th>Product</th><th>SKU</th><th>Location</th><th>On hand</th><th>Incoming</th><th>Available</th><th>Status</th><th style="width:80px"></th></tr></thead>
+          <tbody id="body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/icons.js"></script><script src="../js/data.js"></script><script src="../js/layout.js"></script>
+<script>
+window.PAGE_DEPTH=1;renderLayout("inventory");
+["i1","i2","i3","i4"].forEach((k,i)=>document.getElementById(k).innerHTML=icon(["package","layers","alert","alert"][i],18));
+document.getElementById("newBtn").innerHTML=icon("plus",14)+" Receive stock";
+["c1","c2"].forEach(k=>document.getElementById(k).innerHTML=icon("chevron",13));
+function stat(p){if(p.stock===0)return `<span class="status out">Out</span>`;if(p.stock<20)return `<span class="status low">Low</span>`;return `<span class="status active">In stock</span>`;}
+let search="";
+function render(){
+  const rows=MOCK.products.filter(p=>!search||(p.name+p.sku).toLowerCase().includes(search.toLowerCase()));
+  document.getElementById("body").innerHTML=rows.map(p=>{
+    const inc=Math.floor(Math.random()*40);
+    return `<tr>
+    <td><div class="product-cell"><div class="thumb">${p.emoji}</div><div><b>${p.name}</b><div class="sub">${p.brand}</div></div></div></td>
+    <td><span class="sub" style="font-family:var(--font-mono)">${p.sku}</span></td>
+    <td>Main warehouse</td>
+    <td><b>${p.stock}</b></td>
+    <td><span class="sub">+${inc}</span></td>
+    <td><b>${p.stock+inc}</b></td>
+    <td>${stat(p)}</td>
+    <td><button class="btn btn-secondary btn-sm">Adjust</button></td>
+  </tr>`;}).join("");
+}
+document.getElementById("search").addEventListener("input",e=>{search=e.target.value;render();});
+render();
+</script></body></html>
